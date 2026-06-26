@@ -217,11 +217,12 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
     private List<AdminDashboardResponse.SystemAlert> buildSystemAlerts(LocalDateTime now) {
         List<AdminDashboardResponse.SystemAlert> alerts = new ArrayList<>();
 
-        long failedDmed = dmedSyncRepository.countByStatus(DmedSyncStatus.FAILED);
-        if (failedDmed > 0) {
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+        long failedDmedToday = dmedSyncRepository.countByStatusAndCreatedAtAfter(DmedSyncStatus.FAILED, todayStart);
+        if (failedDmedToday > 5) {
             alerts.add(AdminDashboardResponse.SystemAlert.builder()
                     .type("DMED_SYNC_FAILED")
-                    .message(failedDmed + " ta DMED sync muvaffaqiyatsiz — qayta urinish kerak")
+                    .message(failedDmedToday + " ta DMED sync bugun muvaffaqiyatsiz — qayta urinish kerak")
                     .severity("CRITICAL")
                     .build());
         }

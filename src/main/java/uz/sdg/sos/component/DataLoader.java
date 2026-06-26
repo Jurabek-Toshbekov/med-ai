@@ -326,7 +326,7 @@ public class DataLoader implements CommandLineRunner {
             });
 
             // DMED sync: 85% SUCCESS, 15% FAILED
-            boolean syncSuccess = rnd.nextInt(100) < 85;
+            boolean syncSuccess = rnd.nextInt(100) < 99;
             syncRows.add(new Object[]{
                 UUID.randomUUID(), eventId, jshshir,
                 "{\"source\":\"CLINIC\",\"jshshir\":\"" + jshshir + "\"}",
@@ -339,7 +339,7 @@ public class DataLoader implements CommandLineRunner {
 
         batchInsertEvents(eventRows);
         batchInsertSync(syncRows);
-        log.info("[SEED] 700 medical event + 700 DMED sync (85% SUCCESS) yaratildi");
+        log.info("[SEED] 700 medical event + 700 DMED sync (99% SUCCESS) yaratildi");
     }
 
     // ─── Lab Events (JdbcTemplate — historical dates) ────────────────────────
@@ -397,7 +397,7 @@ public class DataLoader implements CommandLineRunner {
                 notifyAt, status, created, created
             });
 
-            boolean syncSuccess = rnd.nextInt(100) < 85;
+            boolean syncSuccess = rnd.nextInt(100) < 99;
             syncRows.add(new Object[]{
                 UUID.randomUUID(), eventId, jshshir,
                 "{\"source\":\"LAB\",\"testName\":\"" + testName + "\",\"jshshir\":\"" + jshshir + "\"}",
@@ -410,7 +410,7 @@ public class DataLoader implements CommandLineRunner {
 
         batchInsertLabEvents(eventRows);
         batchInsertSync(syncRows);
-        log.info("[SEED] 300 lab event + 300 DMED sync (85% SUCCESS) yaratildi");
+        log.info("[SEED] 300 lab event + 300 DMED sync (99% SUCCESS) yaratildi");
     }
 
     // ─── Batch helpers ────────────────────────────────────────────────────────
