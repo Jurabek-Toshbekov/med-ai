@@ -4,21 +4,20 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
-import uz.sdg.sos.entity.enums.ApplicationType;
-import uz.sdg.sos.entity.enums.ClinicApplicationStatus;
+import uz.sdg.sos.entity.enums.ClinicStatus;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "clinic_applications")
+@Table(name = "labs")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ClinicApplicationEntity {
+public class LabEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -27,34 +26,22 @@ public class ClinicApplicationEntity {
     private UUID id;
 
     @Column(nullable = false)
-    private String firstName;
+    private String name;
 
-    @Column(nullable = false)
-    private String lastName;
+    private String address;
 
-    @Column(nullable = false)
-    private String clinicName;
-
-    @Column(nullable = false)
-    private String phoneNumber1;
-
-    private String phoneNumber2;
-
-    @Column(nullable = false, unique = true)
-    private String login;
-
-    @Column(nullable = false)
-    private String password;
+    private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @Builder.Default
-    private ClinicApplicationStatus status = ClinicApplicationStatus.PENDING;
+    private ClinicStatus status = ClinicStatus.INACTIVE;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @Builder.Default
-    private ApplicationType applicationType = ApplicationType.CLINIC;
+    private String secretKey;
+
+    private LocalDateTime secretKeyGeneratedAt;
+
+    private LocalDateTime secretKeyExpiresAt;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

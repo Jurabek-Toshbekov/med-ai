@@ -3,6 +3,7 @@ package uz.sdg.sos.dto.clinicapplication;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import uz.sdg.sos.entity.enums.ApplicationType;
 
 @Getter
 @Setter
@@ -15,4 +16,5 @@ public class ClinicApplicationRequest {
     private String phoneNumber2;
     private String login;
     private String password;
+    private ApplicationType applicationType;
 }

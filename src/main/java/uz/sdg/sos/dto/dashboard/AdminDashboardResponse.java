@@ -18,6 +18,7 @@ public class AdminDashboardResponse {
     private LocalDateTime generatedAt;
 
     private MedicalEventStats medicalEvents;
+    private LabEventStats labEvents;
     private ClinicStats clinics;
     private ApplicationStats clinicApplications;
     private DmedSyncStats dmedSync;
@@ -116,5 +117,17 @@ public class AdminDashboardResponse {
         private String type;
         private String message;
         private String severity;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LabEventStats {
+        private long total;
+        private long today;
+        private long normal;
+        private long abnormal;
+        private long critical;
     }
 }

@@ -25,6 +25,8 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
     private final ClinicApplicationRepository clinicApplicationRepository;
     private final DmedSyncRepository dmedSyncRepository;
     private final UserRepository userRepository;
+    private final LabEventRepository labEventRepository;
+    private final LabRepository labRepository;
 
     @Override
     public ApiResponse<?> getDashboard() {
@@ -37,6 +39,7 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
             AdminDashboardResponse response = AdminDashboardResponse.builder()
                     .generatedAt(now)
                     .medicalEvents(buildMedicalEventStats(todayStart, thisWeekStart, thisMonthStart))
+                    .labEvents(buildLabEventStats(todayStart))
                     .clinics(buildClinicStats(now, thisMonthStart))
                     .clinicApplications(buildApplicationStats(thisMonthStart))
                     .dmedSync(buildDmedSyncStats(todayStart))
@@ -192,6 +195,22 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
                 .admins(admins)
                 .operators(operators)
                 .doctors(doctors)
+                .build();
+    }
+
+    private AdminDashboardResponse.LabEventStats buildLabEventStats(LocalDateTime todayStart) {
+        long total = labEventRepository.count();
+        long today = labEventRepository.countByCreatedAtAfter(todayStart);
+        long normal = labEventRepository.countByFlag(LabResultFlag.NORMAL);
+        long abnormal = labEventRepository.countByFlag(LabResultFlag.ABNORMAL);
+        long critical = labEventRepository.countByFlag(LabResultFlag.CRITICAL);
+
+        return AdminDashboardResponse.LabEventStats.builder()
+                .total(total)
+                .today(today)
+                .normal(normal)
+                .abnormal(abnormal)
+                .critical(critical)
                 .build();
     }
 

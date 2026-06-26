@@ -1,5 +1,6 @@
 package uz.sdg.sos.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uz.sdg.sos.dto.dmed.DmedPatientData;
+import uz.sdg.sos.dto.labevent.LabAnalysisResult;
+import uz.sdg.sos.entity.enums.LabResultFlag;
 import uz.sdg.sos.service.GeminiService;
 
 import java.time.LocalDate;
@@ -22,6 +25,7 @@ import java.util.Map;
 public class GeminiServiceImpl implements GeminiService {
 
     private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
 
     @Value("${gemini.api.key:}")
     private String apiKey;
@@ -137,5 +141,87 @@ public class GeminiServiceImpl implements GeminiService {
         } catch (Exception e) {
             return 0;
         }
+    }
+
+    @Override
+    public LabAnalysisResult analyzeLabResult(String testName, String testResult, String unit, String referenceRange) {
+        String prompt = buildLabPrompt(testName, testResult, unit, referenceRange);
+
+        for (int attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                String rawResponse = callGemini(prompt);
+                LabAnalysisResult result = parseLabResult(rawResponse);
+                if (result != null) {
+                    log.info("Gemini lab analysis: flag={}, hours={} (attempt {})",
+                            result.getFlag(), result.getHoursUntilContact(), attempt + 1);
+                    return result;
+                }
+                log.warn("Gemini returned unparseable lab response on attempt {}: '{}'", attempt + 1, rawResponse);
+            } catch (Exception e) {
+                log.warn("Gemini lab call failed on attempt {}: {}", attempt + 1, e.getMessage());
+            }
+        }
+
+        log.warn("Gemini lab fallback: returning ABNORMAL with {} hours", DEFAULT_HOURS);
+        return LabAnalysisResult.builder()
+                .flag(LabResultFlag.ABNORMAL)
+                .hoursUntilContact(DEFAULT_HOURS)
+                .conclusion("AI tahlil qila olmadi. Qo'lda tekshirilsin.")
+                .build();
+    }
+
+    private LabAnalysisResult parseLabResult(String rawResponse) {
+        if (rawResponse == null) return null;
+        try {
+            String json = rawResponse.trim();
+            int start = json.indexOf('{');
+            int end = json.lastIndexOf('}');
+            if (start == -1 || end == -1 || end <= start) return null;
+            json = json.substring(start, end + 1);
+
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = objectMapper.readValue(json, Map.class);
+
+            String flagStr = (String) map.get("flag");
+            Object hoursObj = map.get("hoursUntilContact");
+            String conclusion = (String) map.get("conclusion");
+
+            if (flagStr == null || hoursObj == null) return null;
+
+            LabResultFlag flag = LabResultFlag.valueOf(flagStr.trim().toUpperCase());
+            int hours = ((Number) hoursObj).intValue();
+
+            return LabAnalysisResult.builder()
+                    .flag(flag)
+                    .hoursUntilContact(hours)
+                    .conclusion(conclusion)
+                    .build();
+        } catch (Exception e) {
+            log.warn("Lab result parse error: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private String buildLabPrompt(String testName, String testResult, String unit, String referenceRange) {
+        return String.format(
+                "Laboratoriya natijasini tahlil qil va JSON qaytар:\n" +
+                "Test: %s\n" +
+                "Natija: %s %s\n" +
+                "Referens oraliq: %s\n\n" +
+                "Quyidagi JSON formatda javob ber (boshqa hech narsa yozma):\n" +
+                "{\n" +
+                "  \"flag\": \"NORMAL|ABNORMAL|CRITICAL\",\n" +
+                "  \"hoursUntilContact\": <1|2|4|8|24>,\n" +
+                "  \"conclusion\": \"<qisqa tibbiy izoh uzbek tilida>\"\n" +
+                "}\n\n" +
+                "Qoidalar:\n" +
+                "- NORMAL: referens oraliq ichida → hoursUntilContact: 24\n" +
+                "- ABNORMAL: referens oraliqdan biroz chiqgan → hoursUntilContact: 8 yoki 4\n" +
+                "- CRITICAL: xavfli qiymat → hoursUntilContact: 1 yoki 2",
+                testName,
+                testResult,
+                unit != null ? unit : "",
+                referenceRange != null ? referenceRange : "ko'rsatilmagan"
+        );
     }
 }

@@ -4,21 +4,21 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
-import uz.sdg.sos.entity.enums.ApplicationType;
-import uz.sdg.sos.entity.enums.ClinicApplicationStatus;
+import uz.sdg.sos.entity.enums.LabResultFlag;
+import uz.sdg.sos.entity.enums.MedicalEventStatus;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "clinic_applications")
+@Table(name = "lab_events")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ClinicApplicationEntity {
+public class LabEventEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -26,35 +26,45 @@ public class ClinicApplicationEntity {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @Column(nullable = false)
-    private String firstName;
+    @Column(length = 14, nullable = false)
+    private String jshshir;
+
+    private String patientFullName;
+
+    private UUID labId;
 
     @Column(nullable = false)
-    private String lastName;
+    private String testName;
 
     @Column(nullable = false)
-    private String clinicName;
+    private String testResult;
 
-    @Column(nullable = false)
-    private String phoneNumber1;
+    private String unit;
 
-    private String phoneNumber2;
-
-    @Column(nullable = false, unique = true)
-    private String login;
-
-    @Column(nullable = false)
-    private String password;
+    private String referenceRange;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @Builder.Default
-    private ClinicApplicationStatus status = ClinicApplicationStatus.PENDING;
+    private LabResultFlag flag;
+
+    private Integer hoursUntilContact;
+
+    @Column(columnDefinition = "text")
+    private String conclusion;
+
+    private String familyDoctorId;
+
+    private String familyDoctorPhone;
+
+    private String familyDoctorFcmToken;
+
+    private LocalDateTime notifyAt;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     @Builder.Default
-    private ApplicationType applicationType = ApplicationType.CLINIC;
+    private MedicalEventStatus status = MedicalEventStatus.PENDING;
+
+    @Column(columnDefinition = "text")
+    private String aiRawResponse;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

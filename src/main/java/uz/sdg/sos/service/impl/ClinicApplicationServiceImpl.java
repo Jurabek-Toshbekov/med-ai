@@ -10,12 +10,15 @@ import uz.sdg.sos.dto.clinicapplication.ClinicApplicationRequest;
 import uz.sdg.sos.dto.clinicapplication.ClinicApplicationResponse;
 import uz.sdg.sos.entity.ClinicApplicationEntity;
 import uz.sdg.sos.entity.ClinicEntity;
+import uz.sdg.sos.entity.LabEntity;
 import uz.sdg.sos.entity.UserEntity;
 import uz.sdg.sos.entity.enums.AccountTypeEnum;
+import uz.sdg.sos.entity.enums.ApplicationType;
 import uz.sdg.sos.entity.enums.ClinicApplicationStatus;
 import uz.sdg.sos.entity.enums.ClinicStatus;
 import uz.sdg.sos.repository.ClinicApplicationRepository;
 import uz.sdg.sos.repository.ClinicRepository;
+import uz.sdg.sos.repository.LabRepository;
 import uz.sdg.sos.repository.UserRepository;
 import uz.sdg.sos.service.ClinicApplicationService;
 import uz.sdg.sos.utils.ResMessages;
@@ -33,6 +36,7 @@ public class ClinicApplicationServiceImpl implements ClinicApplicationService {
 
     private final ClinicApplicationRepository applicationRepository;
     private final ClinicRepository clinicRepository;
+    private final LabRepository labRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -52,6 +56,10 @@ public class ClinicApplicationServiceImpl implements ClinicApplicationService {
                 return new ApiResponse<>(false, "Bu login allaqachon ro'yxatdan o'tgan");
             }
 
+            ApplicationType applicationType = request.getApplicationType() != null
+                    ? request.getApplicationType()
+                    : ApplicationType.CLINIC;
+
             ClinicApplicationEntity application = ClinicApplicationEntity.builder()
                     .firstName(request.getFirstName())
                     .lastName(request.getLastName())
@@ -61,6 +69,7 @@ public class ClinicApplicationServiceImpl implements ClinicApplicationService {
                     .login(request.getLogin())
                     .password(passwordEncoder.encode(request.getPassword()))
                     .status(ClinicApplicationStatus.PENDING)
+                    .applicationType(applicationType)
                     .build();
 
             applicationRepository.save(application);
@@ -107,40 +116,85 @@ public class ClinicApplicationServiceImpl implements ClinicApplicationService {
                 return new ApiResponse<>(false, "Bu ariza allaqachon ko'rib chiqilgan");
             }
 
-            // 1. Klinikani yaratish
             String secretKey = UUID.randomUUID().toString().replace("-", "");
             LocalDateTime now = LocalDateTime.now();
-            ClinicEntity clinic = ClinicEntity.builder()
-                    .name(application.getClinicName())
-                    .phoneNumber(application.getPhoneNumber1())
-                    .status(ClinicStatus.ACTIVE)
-                    .secretKey(secretKey)
-                    .secretKeyGeneratedAt(now)
-                    .secretKeyExpiresAt(now.plusYears(1))
-                    .build();
-            clinicRepository.save(clinic);
 
-            // 2. Klinika uchun UserEntity yaratish (OPERATOR)
-            UserEntity user = new UserEntity();
-            user.setFirstName(application.getFirstName());
-            user.setLastName(application.getLastName());
-            user.setPhoneNumber(application.getLogin());
-            user.setPassword(application.getPassword()); // already encoded
-            user.setAccountType(AccountTypeEnum.OPERATOR);
-            userRepository.save(user);
+            ApplicationType appType = application.getApplicationType() != null
+                    ? application.getApplicationType()
+                    : ApplicationType.CLINIC;
 
-            // 3. Ariza statusini yangilash
-            application.setStatus(ClinicApplicationStatus.APPROVED);
-            applicationRepository.save(application);
+            LocalDateTime expiresAt;
 
-            ClinicApplicationResponse response = ClinicApplicationResponse.fromEntity(application);
-            response.setSecretKey(secretKey);
-            response.setSecretKeyExpiresAt(clinic.getSecretKeyExpiresAt());
+            if (appType == ApplicationType.LAB) {
+                // 1. Lab yaratish
+                LabEntity lab = LabEntity.builder()
+                        .name(application.getClinicName())
+                        .phoneNumber(application.getPhoneNumber1())
+                        .status(ClinicStatus.ACTIVE)
+                        .secretKey(secretKey)
+                        .secretKeyGeneratedAt(now)
+                        .secretKeyExpiresAt(now.plusYears(1))
+                        .build();
+                labRepository.save(lab);
+                expiresAt = lab.getSecretKeyExpiresAt();
 
-            log.info("Klinika arizasi tasdiqlandi: {} → clinicId={}, userId={}",
-                    application.getClinicName(), clinic.getId(), user.getId());
+                // 2. Lab uchun UserEntity yaratish (OPERATOR)
+                UserEntity user = new UserEntity();
+                user.setFirstName(application.getFirstName());
+                user.setLastName(application.getLastName());
+                user.setPhoneNumber(application.getLogin());
+                user.setPassword(application.getPassword());
+                user.setAccountType(AccountTypeEnum.OPERATOR);
+                userRepository.save(user);
 
-            return new ApiResponse<>(true, "Klinika muvaffaqiyatli tasdiqlandi", response);
+                // 3. Ariza statusini yangilash
+                application.setStatus(ClinicApplicationStatus.APPROVED);
+                applicationRepository.save(application);
+
+                ClinicApplicationResponse response = ClinicApplicationResponse.fromEntity(application);
+                response.setSecretKey(secretKey);
+                response.setSecretKeyExpiresAt(expiresAt);
+
+                log.info("Lab arizasi tasdiqlandi: {} → labId={}, userId={}",
+                        application.getClinicName(), lab.getId(), user.getId());
+
+                return new ApiResponse<>(true, "Laboratoriya muvaffaqiyatli tasdiqlandi", response);
+
+            } else {
+                // 1. Klinikani yaratish
+                ClinicEntity clinic = ClinicEntity.builder()
+                        .name(application.getClinicName())
+                        .phoneNumber(application.getPhoneNumber1())
+                        .status(ClinicStatus.ACTIVE)
+                        .secretKey(secretKey)
+                        .secretKeyGeneratedAt(now)
+                        .secretKeyExpiresAt(now.plusYears(1))
+                        .build();
+                clinicRepository.save(clinic);
+                expiresAt = clinic.getSecretKeyExpiresAt();
+
+                // 2. Klinika uchun UserEntity yaratish (OPERATOR)
+                UserEntity user = new UserEntity();
+                user.setFirstName(application.getFirstName());
+                user.setLastName(application.getLastName());
+                user.setPhoneNumber(application.getLogin());
+                user.setPassword(application.getPassword());
+                user.setAccountType(AccountTypeEnum.OPERATOR);
+                userRepository.save(user);
+
+                // 3. Ariza statusini yangilash
+                application.setStatus(ClinicApplicationStatus.APPROVED);
+                applicationRepository.save(application);
+
+                ClinicApplicationResponse response = ClinicApplicationResponse.fromEntity(application);
+                response.setSecretKey(secretKey);
+                response.setSecretKeyExpiresAt(expiresAt);
+
+                log.info("Klinika arizasi tasdiqlandi: {} → clinicId={}, userId={}",
+                        application.getClinicName(), clinic.getId(), user.getId());
+
+                return new ApiResponse<>(true, "Klinika muvaffaqiyatli tasdiqlandi", response);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return new ApiResponse<>(false, ResMessages.SERVER_ERROR + " " + e.getMessage());

@@ -24,7 +24,7 @@ public interface MedicalEventRepository extends JpaRepository<MedicalEventEntity
     @Query(value = "SELECT CAST(created_at AS DATE) as date, COUNT(*) as count FROM medical_events WHERE created_at >= :from GROUP BY CAST(created_at AS DATE) ORDER BY CAST(created_at AS DATE)", nativeQuery = true)
     List<Object[]> countByDayAfter(@Param("from") LocalDateTime from);
 
-    @Query(value = "SELECT clinic_id, COUNT(*) as cnt FROM medical_events GROUP BY clinic_id ORDER BY cnt DESC LIMIT 5", nativeQuery = true)
+    @Query(value = "SELECT CAST(clinic_id AS text), COUNT(*) as cnt FROM medical_events GROUP BY clinic_id ORDER BY cnt DESC LIMIT 5", nativeQuery = true)
     List<Object[]> topClinicsByEventCount();
 
     long countByHoursUntilContact(Integer hours);
