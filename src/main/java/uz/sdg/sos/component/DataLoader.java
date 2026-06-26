@@ -34,7 +34,6 @@ public class DataLoader implements CommandLineRunner {
             admin.setLastName("Toshbekov");
             admin.setPassword(passwordEncoder.encode("1+1=11"));
             admin.setPhoneNumber("+998994059000");
-            admin.setPassword02("1+1=11");
             admin.setAccountType(AccountTypeEnum.ADMIN);
             admin.setGenderType(GenderType.ERKAK);
             admin.setDateBirth(LocalDate.of(1997, 11, 29));

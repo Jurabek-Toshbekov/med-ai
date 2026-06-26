@@ -1,3 +1,9 @@
 spring:
   profiles:
     active: local
+
+
+eskiz:
+  email: "jurabek99899@gmail.com"
+  password: "Ab8Yi44OBMd1K2xJJy0SzqitYK24IldkvRlXn89T"
+  from: "4546"

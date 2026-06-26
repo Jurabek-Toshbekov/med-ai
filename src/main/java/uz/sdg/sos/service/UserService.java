@@ -8,13 +8,10 @@ import uz.sdg.sos.entity.enums.AccountTypeEnum;
 public interface UserService {
 
     ApiResponse<?> createByAdmin(UserDto dto);
-    ApiResponse<?> edit(UserDto dto);
+    ApiResponse<?> edit(Long id, UserDto dto);
     ApiResponse<?> getOne(Long userId);
-    ApiResponse<?> getAll(int page, int size, AccountTypeEnum accountType, String phone, String lastName, String firstName,
-                          String email, String school, String group, String genderType);
+    ApiResponse<?> getAll(int page, int size, AccountTypeEnum accountType, String phone, String lastName, String firstName, String genderType);
     ApiResponse<?> delete(Long userId);
     UserEntity getById(Long userId);
-
-
 
 }

@@ -37,20 +37,11 @@ public class UserEntity extends BaseEntity implements UserDetails {
     private String phoneNumber;
     @Column(nullable = false)
     private String password;
-    private String password02;
     @Enumerated(EnumType.STRING)
     private GenderType genderType;
     private LocalDate dateBirth;
     private String email;
     private String address;
-    private String addressRegion;
-    private String addressDistrict;
-    private String addressMFY;
-    private String school;
-    private String group;
-
-    private Long courseId;
-
 
     @Enumerated(EnumType.STRING)
     private AccountTypeEnum accountType;

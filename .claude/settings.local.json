@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -X POST \"http://localhost:7007/sdg/uz/login?login=%2B998994059000&password=1%2B1%3D11\")",
+      "Bash(python -m json.tool)",
+      "Bash(curl -s -X POST \"http://localhost:7007/sdg/uz/login\" --data-urlencode \"login=+998994059000\" --data-urlencode \"password=1+1=11\")",
+      "Bash(PGPASSWORD=1111 psql -h localhost -U postgres -d dmed -c \"SELECT phone_number, account_type FROM users LIMIT 5;\")",
+      "Bash(netstat -ano)",
+      "Bash(tasklist /FI \"IMAGENAME eq java.exe\")",
+      "PowerShell(Get-Process *)",
+      "Bash(curl *)",
+      "PowerShell(Stop-Process *)",
+      "Bash(./gradlew bootRun)",
+      "Bash(tee /tmp/app_fresh.log)",
+      "Bash(./gradlew compileJava)",
+      "Bash(./gradlew processResources compileJava)",
+      "Bash(docker run *)",
+      "PowerShell(docker run *)",
+      "PowerShell(Get-NetTCPConnection *)",
+      "PowerShell(git *)"
+    ]
+  }
+}

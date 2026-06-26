@@ -28,7 +28,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
 //                .host("52.53.242.81:7088")
 //                .host("localhost:7088")
-                .host("fbdc-84-54-71-184.ngrok-free.app")
+                .host("3ed4-185-139-137-95.ngrok-free.app")
                 .select()
                 // qaysi urllar olishi kerak
                 .apis(RequestHandlerSelectors.basePackage("uz.sdg.sos.controller"))
