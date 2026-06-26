@@ -70,3 +70,8 @@ gemini:
 fcm:
   server:
     key: ${FCM_SERVER_KEY:}
+
+dmed:
+  api:
+    url: https://httpbin.org/post
+    timeout: 5000

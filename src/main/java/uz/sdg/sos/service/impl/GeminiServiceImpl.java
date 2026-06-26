@@ -125,7 +125,7 @@ public class GeminiServiceImpl implements GeminiService {
                 "- Minor conditions: return 24\n\n" +
                 "CRITICAL: Your response must be a single integer only.\n" +
                 "No explanation. No text. No punctuation. Just the number.\n" +
-                "Examples of valid responses: 1, 2, 4, 8, 24",
+                "Examples of valid responses: 1, 2, 4, 8, 24, 48, 72",
                 age, chronicDiseases, medications, diagnosis, conclusion
         );
     }

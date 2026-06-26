@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,6 +20,7 @@ import uz.sdg.sos.security.JwtAuthenticationFilter;
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
+
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final ObjectMapper objectMapper;
@@ -26,51 +28,51 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors()
-                .and()
-                .csrf()
-                .disable()
+                .cors().and()
+                .csrf().disable()
                 .authorizeRequests()
 
-                .antMatchers(OPEN_ALL_URLS).permitAll()
-                .antMatchers("/", "/index").permitAll()
-//                .antMatchers(HttpMethod.POST,OPEN_ALL_URLS).permitAll()
-                .anyRequest()
-                .authenticated()
+                // === PUBLIC ===
+                .antMatchers(PUBLIC_URLS).permitAll()
+                .antMatchers(SWAGGER_URLS).permitAll()
+
+                // === ADMIN ONLY ===
+                .antMatchers(ADMIN_ONLY_URLS).hasAuthority("ADMIN")
+
+                // === AUTHENTICATED (any role) ===
+                .anyRequest().authenticated()
+
                 .and()
                 .exceptionHandling()
-                .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    jwtAuthFilter.writerErrorResp(accessDeniedException,response, 403,objectMapper);
-                })
+                .accessDeniedHandler((req, res, ex) ->
+                        jwtAuthFilter.writerErrorResp(ex, res, 403, objectMapper))
+
                 .and()
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-        System.out.println("dcsacsacsacsacsa");
-        return http.build();
 
+        return http.build();
     }
 
-    // barcha ochiq yo'llar Real server uchun
-    private static final String[] OPENED_URLS = {
-            "/sos/api/auth/one",
-            "/sos/api/auth/two",
-            "/sos/api/auth/three",
-            "/sos/api/auth/login",
-            "/sos/api/auth/forget_password/**",
-            "/guest"
+    // Auth yo'q — ochiq
+    private static final String[] PUBLIC_URLS = {
+            "/sdg/uz/login",
+            "/api/v1/clinic-applications/apply",
     };
 
-    // swagger uchun ishlatiladigan ichiq yollar
-    private static final String[] SWAGGER_WHITELIST = {
-            "/sos/api/auth/login",
+    // Faqat ADMIN
+    private static final String[] ADMIN_ONLY_URLS = {
+            "/api/v1/users/**",
+            "/api/v1/clinics/**",
+            "/api/v1/clinic-applications/**",
+    };
+
+    // Swagger (dev uchun)
+    private static final String[] SWAGGER_URLS = {
             "/swagger-ui/**",
             "/swagger-ui.html",
-            "/swagger-ui.html#/"
-    };
-
-    // test uchun ishlatiladigan ichiq yolalr
-    private static final String[] OPEN_ALL_URLS = {
-            "/**",
-
+            "/v2/api-docs",
+            "/swagger-resources/**",
+            "/webjars/**",
     };
 }

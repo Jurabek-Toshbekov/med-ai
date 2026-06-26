@@ -17,6 +17,7 @@ import uz.sdg.sos.entity.enums.MedicalEventStatus;
 import uz.sdg.sos.repository.ClinicRepository;
 import uz.sdg.sos.repository.MedicalEventRepository;
 import uz.sdg.sos.service.DmedMockService;
+import uz.sdg.sos.service.DmedSyncService;
 import uz.sdg.sos.service.GeminiService;
 import uz.sdg.sos.service.MedicalEventService;
 import uz.sdg.sos.service.NotificationService;
@@ -32,6 +33,7 @@ public class MedicalEventServiceImpl implements MedicalEventService {
     private final ClinicRepository clinicRepository;
     private final MedicalEventRepository medicalEventRepository;
     private final DmedMockService dmedMockService;
+    private final DmedSyncService dmedSyncService;
     private final GeminiService geminiService;
     private final NotificationService notificationService;
 
@@ -97,6 +99,9 @@ public class MedicalEventServiceImpl implements MedicalEventService {
 
         // Schedule notification
         notificationService.scheduleNotification(event);
+
+        // DMED medkartasiga yozish (mock — hozircha shartnoma yo'q)
+        dmedSyncService.syncToDmed(event, clinic);
 
         MedicalEventIntakeResponse response = MedicalEventIntakeResponse.builder()
                 .eventId(event.getId())
