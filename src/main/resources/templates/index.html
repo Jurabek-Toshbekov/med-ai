@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimalistic Time & Date</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nova+Mono&family=Eczar&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Nova Mono', monospace;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        #loading-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #ffcc00;
+            font-family: 'Eczar', serif;
+            font-size: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #loading {
+            font-size: 1.5rem;
+            color: #00d4ff;
+            margin-top: 20px;
+            font-family: 'Nova Mono', monospace;
+        }
+
+        .loading-circle {
+            border: 5px solid #00d4ff;
+            border-top: 5px solid transparent;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-top: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #time {
+            font-family: 'Nova Mono', monospace;
+            font-size: 15vw;
+            text-align: center;
+            text-shadow: 0px 0px 20px rgba(0, 255, 255, 0.8);
+            color: #00d4ff;
+        }
+
+        #date {
+            font-family: 'Eczar', serif;
+            font-size: 5vw;
+            text-align: center;
+            color: #ffcc00;
+            text-shadow: 0px 0px 20px rgba(255, 255, 0, 0.8);
+        }
+
+        @media only screen and (max-width: 500px) {
+            #time {
+                font-size: 30vw;
+            }
+
+            #date {
+                font-size: 12vw;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Loading Container -->
+<div id="loading-container">
+    <p id="loading"> Yuklanmoqda ...</p>
+    <div class="loading-circle"></div>
+</div>
+
+<!-- Time and Date -->
+<div id="content" style="display: none;">
+    <p id="time"></p>
+    <p id="date"></p>
+</div>
+
+<script>
+    function updateTime() {
+        var d = new Date();
+        document.getElementById("time").innerHTML = d.toLocaleTimeString();
+        document.getElementById("date").innerHTML = d.toLocaleDateString();
+    }
+
+    setInterval(updateTime, 1000);
+
+    // Hide loading and show content after 3 seconds
+    setTimeout(function() {
+        document.getElementById('loading-container').style.display = 'none';  // Hide loading
+        document.getElementById('content').style.display = 'block';           // Show time and date
+    }, 10000);  // 3 seconds delay
+</script>
+
+</body>
+
+</html>

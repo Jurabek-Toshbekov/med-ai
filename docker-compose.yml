@@ -1,0 +1,19 @@
+#version: '3.1'
+#services:
+#  API:
+#    image: 'set_of_service.jar'
+#    container_name: "sos"
+#    network_mode: "mynet"
+#    build:
+#      context: .
+#    restart: always
+#    ports:
+#      - "8091:8080"
+#    volumes:
+#      - '/e_auksion/static/:/e_auksion/static/'
+
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:jdbc:postgresql://localhost:5432/sos
+#      - SPRING_DATASOURCE_USERNAME=aman
+#      - SPRING_DATASOURCE_PASSWORD=aman
+#      - SPRING_JPA_HIBERNATE_DDL_AUTO=update

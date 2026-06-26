@@ -1,0 +1,62 @@
+server:
+  port: 7090
+
+spring:
+  datasource:
+    username: postgres
+    password: 1111
+    url: jdbc:postgresql://localhost:5432/dmed
+    driver-class-name: org.postgresql.Driver
+    initialization-mode: always
+
+  security:
+    user:
+      name: spring
+      password: spring
+
+  jpa:
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+    hibernate:
+      ddl-auto: create
+    show-sql: false
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
+    mapper:
+      default-view-inclusion: true
+
+application:
+  security:
+    jwt:
+      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      expiration: 172800000
+      refresh-token:
+        expiration: 1296000000
+
+file:
+  upload:
+    url: "E:/Projects/set_of_service/static/file"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+    metrics:
+      enabled: true
+  health:
+    redis:
+      enabled: false
