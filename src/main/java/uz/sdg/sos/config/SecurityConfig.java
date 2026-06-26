@@ -65,6 +65,7 @@ public class SecurityConfig {
             "/api/v1/users/**",
             "/api/v1/clinics/**",
             "/api/v1/clinic-applications/**",
+            "/api/v1/admin/**",
     };
 
     // Swagger (dev uchun)

@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 import uz.sdg.sos.entity.enums.ClinicStatus;
+import uz.sdg.sos.entity.enums.ClinicType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -36,6 +37,9 @@ public class ClinicEntity {
     @Column(nullable = false)
     @Builder.Default
     private ClinicStatus status = ClinicStatus.INACTIVE;
+
+    @Enumerated(EnumType.STRING)
+    private ClinicType clinicType;
 
     private String secretKey;
 

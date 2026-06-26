@@ -37,6 +37,7 @@ public class ClinicServiceImpl implements ClinicService {
                     .name(request.getName())
                     .address(request.getAddress())
                     .phoneNumber(request.getPhoneNumber())
+                    .clinicType(request.getClinicType())
                     .status(ClinicStatus.INACTIVE)
                     .build();
             clinicRepository.save(clinic);
@@ -103,6 +104,9 @@ public class ClinicServiceImpl implements ClinicService {
             }
             if (request.getPhoneNumber() != null) {
                 clinic.setPhoneNumber(request.getPhoneNumber());
+            }
+            if (request.getClinicType() != null) {
+                clinic.setClinicType(request.getClinicType());
             }
             clinicRepository.save(clinic);
             return new ApiResponse<>(true, ResMessages.SUCCESS, ClinicResponse.fromEntity(clinic));

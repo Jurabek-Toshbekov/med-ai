@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import uz.sdg.sos.entity.ClinicApplicationEntity;
 import uz.sdg.sos.entity.enums.ClinicApplicationStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,4 +14,7 @@ public interface ClinicApplicationRepository extends JpaRepository<ClinicApplica
 
     List<ClinicApplicationEntity> findAllByStatusOrderByCreatedAtDesc(ClinicApplicationStatus status);
     boolean existsByLogin(String login);
+
+    long countByStatus(ClinicApplicationStatus status);
+    long countByStatusAndCreatedAtAfter(ClinicApplicationStatus status, LocalDateTime dateTime);
 }

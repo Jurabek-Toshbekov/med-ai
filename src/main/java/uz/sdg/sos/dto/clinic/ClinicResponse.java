@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uz.sdg.sos.entity.ClinicEntity;
 import uz.sdg.sos.entity.enums.ClinicStatus;
+import uz.sdg.sos.entity.enums.ClinicType;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -20,6 +21,7 @@ public class ClinicResponse {
     private String name;
     private String address;
     private String phoneNumber;
+    private ClinicType clinicType;
     private ClinicStatus status;
     private String secretKey;
     private LocalDateTime secretKeyGeneratedAt;
@@ -33,6 +35,7 @@ public class ClinicResponse {
                 .name(entity.getName())
                 .address(entity.getAddress())
                 .phoneNumber(entity.getPhoneNumber())
+                .clinicType(entity.getClinicType())
                 .status(entity.getStatus())
                 .secretKey(entity.getStatus() == ClinicStatus.ACTIVE ? entity.getSecretKey() : null)
                 .secretKeyGeneratedAt(entity.getSecretKeyGeneratedAt())
