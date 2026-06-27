@@ -17,7 +17,15 @@
       "Bash(docker run *)",
       "PowerShell(docker run *)",
       "PowerShell(Get-NetTCPConnection *)",
-      "PowerShell(git *)"
+      "PowerShell(git *)",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:7007/actuator/health\" -TimeoutSec 3; $r.StatusCode } catch { \"Server ishlamayapti: $_\" })",
+      "Bash(nohup mvn spring-boot:run -Dspring-boot.run.profiles=local)",
+      "Bash(echo \"PID: $!\")",
+      "Bash(git *)",
+      "Bash(mvn compile *)",
+      "Bash(python3 -m json.tool)",
+      "Bash(./gradlew compileJava -q)",
+      "PowerShell(netstat *)"
     ]
   }
 }

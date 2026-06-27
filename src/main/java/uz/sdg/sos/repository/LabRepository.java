@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import uz.sdg.sos.entity.LabEntity;
 import uz.sdg.sos.entity.enums.ClinicStatus;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,4 +15,6 @@ public interface LabRepository extends JpaRepository<LabEntity, UUID> {
     Optional<LabEntity> findBySecretKey(String secretKey);
 
     long countByStatus(ClinicStatus status);
+
+    List<LabEntity> findAllByStatus(ClinicStatus status);
 }

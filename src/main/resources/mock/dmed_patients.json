@@ -39,7 +39,7 @@
       "familyDoctor": {
         "id": "doc-uuid-002",
         "fullName": "Nazarov Bobur Hamidovich",
-        "phoneNumber": "+998912345678",
+        "phoneNumber": "+998949943888",
         "polyclinicName": "Yunusobod 3-son poliklinika",
         "workingHours": "08:00-17:00",
         "fcmToken": "fCmT0k3n_doc002_aB3cD4eF5gH6iJ7kL8mN9oP0qR1sT2uV3wX4yZ5A6bC7dE8f",
@@ -64,7 +64,7 @@
       "familyDoctor": {
         "id": "doc-uuid-003",
         "fullName": "Qodirov Anvar Umarovich",
-        "phoneNumber": "+998935551234",
+        "phoneNumber": "+998774062000",
         "polyclinicName": "Samarqand 5-son poliklinika",
         "workingHours": "08:00-16:00",
         "fcmToken": "fCmT0k3n_doc003_zY9xW8vU7tS6rQ5pO4nM3lK2jI1hG0fE9dC8bA7zY6xW5vU",
@@ -89,7 +89,7 @@
       "familyDoctor": {
         "id": "doc-uuid-004",
         "fullName": "Tursunova Dilnoza Xolmatovna",
-        "phoneNumber": "+998946667890",
+        "phoneNumber": "+998933989923",
         "polyclinicName": "Farg'ona 2-son poliklinika",
         "workingHours": "08:00-17:00",
         "fcmToken": "fCmT0k3n_doc004_mN1oP2qR3sT4uV5wX6yZ7aB8cD9eF0gH1iJ2kL3mN4oP5qR",

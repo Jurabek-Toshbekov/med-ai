@@ -40,6 +40,7 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
                     .generatedAt(now)
                     .medicalEvents(buildMedicalEventStats(todayStart, thisWeekStart, thisMonthStart))
                     .labEvents(buildLabEventStats(todayStart))
+                    .labs(buildLabStats())
                     .clinics(buildClinicStats(now, thisMonthStart))
                     .clinicApplications(buildApplicationStats(thisMonthStart))
                     .dmedSync(buildDmedSyncStats(todayStart))
@@ -195,6 +196,18 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
                 .admins(admins)
                 .operators(operators)
                 .doctors(doctors)
+                .build();
+    }
+
+    private AdminDashboardResponse.LabStats buildLabStats() {
+        long total = labRepository.count();
+        long active = labRepository.countByStatus(ClinicStatus.ACTIVE);
+        long inactive = labRepository.countByStatus(ClinicStatus.INACTIVE);
+
+        return AdminDashboardResponse.LabStats.builder()
+                .total(total)
+                .active(active)
+                .inactive(inactive)
                 .build();
     }
 

@@ -19,6 +19,7 @@ public class AdminDashboardResponse {
 
     private MedicalEventStats medicalEvents;
     private LabEventStats labEvents;
+    private LabStats labs;
     private ClinicStats clinics;
     private ApplicationStats clinicApplications;
     private DmedSyncStats dmedSync;
@@ -117,6 +118,16 @@ public class AdminDashboardResponse {
         private String type;
         private String message;
         private String severity;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LabStats {
+        private long total;
+        private long active;
+        private long inactive;
     }
 
     @Data

@@ -233,25 +233,36 @@ public class DataLoader implements CommandLineRunner {
         LocalDateTime now = LocalDateTime.now();
         List<LabEntity> labs = new ArrayList<>();
 
+        // [name, phone, address, status]
         String[][] data = {
-            {"Invitro Laboratoriyasi Toshkent", "+998713001001"},
-            {"Medline Diagnostika Lab",         "+998713001002"},
-            {"Central Diagnostics Markazi",     "+998713001003"},
-            {"Bio Lab Toshkent",                "+998713001004"},
+            {"Invitro Laboratoriyasi Toshkent",    "+998713001001", "Toshkent, Yunusobod t., Amir Temur ko'chasi 15",    "ACTIVE"},
+            {"Medline Diagnostika Lab",             "+998713001002", "Toshkent, Chilonzor t., Bunyodkor ko'chasi 22",     "ACTIVE"},
+            {"Central Diagnostics Markazi",         "+998713001003", "Toshkent, Mirzo Ulug'bek t., Movarounnaher 8",      "ACTIVE"},
+            {"Bio Lab Toshkent",                    "+998713001004", "Toshkent, Shayxontohur t., Hamza ko'chasi 37",      "ACTIVE"},
+            {"Helix Diagnostika Markazi",           "+998713001005", "Toshkent, Mirabad t., Mustaqillik shoh ko'chasi 4", "ACTIVE"},
+            {"Andijon Viloyat Diagnostika Lab",     "+998713001006", "Andijon, Navoiy ko'chasi 12",                       "ACTIVE"},
+            {"Samarqand Tibbiy Laboratoriya",       "+998713001007", "Samarqand, Registon ko'chasi 5",                    "ACTIVE"},
+            {"Namangan Biologik Lab Markazi",       "+998713001008", "Namangan, Uychi ko'chasi 19",                       "ACTIVE"},
+            {"Farg'ona Ekspress Diagnostika",       "+998713001009", "Farg'ona, Mustaqillik ko'chasi 31",                 "ACTIVE"},
+            {"Buxoro Tibbiy Tahlil Laboratoriyasi", "+998713001010", "Buxoro, Komil Murtazoyev ko'chasi 7",              "ACTIVE"},
+            {"Qozon Lab (Yangi Toshkent)",          "+998713001011", "Toshkent, Sergeli t., Yangi shahar 3-blok",         "INACTIVE"},
+            {"GeneticsPro Lab",                     "+998713001012", "Toshkent, Beshtepasi massivi, 2-ko'cha 9-uy",       "INACTIVE"},
         };
 
         for (String[] d : data) {
+            ClinicStatus status = ClinicStatus.valueOf(d[3]);
             LabEntity lab = LabEntity.builder()
                     .name(d[0])
                     .phoneNumber(d[1])
-                    .status(ClinicStatus.ACTIVE)
+                    .address(d[2])
+                    .status(status)
                     .secretKey(UUID.randomUUID().toString().replace("-", ""))
                     .secretKeyGeneratedAt(now.minusMonths(1))
-                    .secretKeyExpiresAt(now.plusMonths(10))
+                    .secretKeyExpiresAt(status == ClinicStatus.ACTIVE ? now.plusMonths(10) : now.minusDays(5))
                     .build();
             labs.add(labRepository.save(lab));
         }
-        log.info("[SEED] {} laboratoriya yaratildi", labs.size());
+        log.info("[SEED] {} laboratoriya yaratildi (10 ACTIVE, 2 INACTIVE)", labs.size());
         return labs;
     }
 
